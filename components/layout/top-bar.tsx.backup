@@ -1,0 +1,104 @@
+"use client"
+
+import { Heart, Flame, Gem, LogOut, User } from "lucide-react"
+import { useGame } from "@/contexts/game-context"
+import { useSession, signOut } from "next-auth/react"
+import { Button } from "@/components/ui/button"
+import { useState, useEffect, useRef } from "react"
+
+export function TopBar() {
+  const { state } = useGame()
+  const { data: session } = useSession()
+  const [showUserMenu, setShowUserMenu] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
+
+  const handleSignOut = async () => {
+    await signOut({ callbackUrl: "/auth/signin" })
+  }
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowUserMenu(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
+
+  return (
+    <div className="flex items-center justify-between p-4 bg-white border-b border-gray-100">
+      <div className="flex items-center space-x-2">
+        <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+          <span className="text-lg">🦉</span>
+        </div>
+        <span className="text-lg font-bold text-green-600">OwlLearn</span>
+      </div>
+
+      <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-1">
+          <Flame className="w-5 h-5 text-orange-500" />
+          <span className="font-bold text-orange-600">{state.streak}</span>
+        </div>
+
+        <div className="flex items-center space-x-1">
+          <Gem className="w-5 h-5 text-blue-500" />
+          <span className="font-bold text-blue-600">{state.gems}</span>
+        </div>
+
+        <div className="flex items-center space-x-1">
+          <Heart className={`w-5 h-5 ${state.hearts > 0 ? "text-red-500" : "text-gray-300"}`} />
+          <span className={`font-bold ${state.hearts > 0 ? "text-red-600" : "text-gray-400"}`}>{state.hearts}</span>
+        </div>
+
+        <div className="text-right">
+          <div className="text-xs text-gray-500">XP</div>
+          <div className="font-bold text-green-600">{state.totalXp}</div>
+        </div>
+
+        {/* User Menu */}
+        <div className="relative" ref={menuRef}>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setShowUserMenu(!showUserMenu)}
+            className="w-8 h-8 rounded-full"
+          >
+            {session?.user?.image ? (
+              <img
+                src={session.user.image}
+                alt="User avatar"
+                className="w-8 h-8 rounded-full"
+              />
+            ) : (
+              <User className="w-4 h-4" />
+            )}
+          </Button>
+
+          {showUserMenu && (
+            <div className="absolute right-0 top-10 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+              <div className="p-3 border-b border-gray-100">
+                <p className="font-medium text-gray-800">{session?.user?.name}</p>
+                <p className="text-sm text-gray-500">{session?.user?.email}</p>
+              </div>
+              <div className="p-2">
+                <Button
+                  variant="ghost"
+                  onClick={handleSignOut}
+                  className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  ログアウト
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}

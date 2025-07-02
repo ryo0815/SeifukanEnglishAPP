@@ -1,0 +1,245 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 142 76% 36%;
+    --primary-foreground: 355.7 100% 97.3%;
+    --secondary: 210 40% 98%;
+    --secondary-foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 98%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 98%;
+    --accent-foreground: 222.2 84% 4.9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 142 76% 36%;
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Custom animations */
+@keyframes bounce-in {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse-green {
+  0%,
+  100% {
+    background-color: #58cc02;
+  }
+  50% {
+    background-color: #89e219;
+  }
+}
+
+.animate-bounce-in {
+  animation: bounce-in 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.animate-slide-up {
+  animation: slide-up 0.4s ease-out;
+}
+
+.animate-pulse-green {
+  animation: pulse-green 2s infinite;
+}
+
+/* PWA specific styles */
+@media (display-mode: standalone) {
+  body {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Question styles */
+.question-card {
+  @apply bg-white rounded-2xl p-6 shadow-lg border-2 border-gray-100;
+  transition: all 0.3s ease;
+}
+
+.question-card:hover {
+  @apply shadow-xl border-green-200;
+}
+
+.option-button {
+  @apply w-full p-4 rounded-xl border-2 border-gray-200 bg-white text-left font-medium transition-all duration-200;
+}
+
+.option-button:hover {
+  @apply border-gray-300 bg-gray-50;
+}
+
+.option-button.selected {
+  @apply border-blue-400 bg-blue-50;
+}
+
+.option-button.correct {
+  @apply border-green-500 bg-green-50 text-green-700;
+}
+
+.option-button.incorrect {
+  @apply border-red-500 bg-red-50 text-red-700;
+}
+
+/* Skill tree styles */
+.skill-node {
+  @apply relative flex items-center justify-center w-16 h-16 rounded-full border-4 transition-all duration-300;
+}
+
+.skill-node.completed {
+  @apply bg-green-500 border-green-600 text-white shadow-lg;
+}
+
+.skill-node.current {
+  @apply bg-blue-500 border-blue-600 text-white shadow-lg animate-pulse;
+}
+
+.skill-node.locked {
+  @apply bg-gray-200 border-gray-300 text-gray-500;
+}
+
+/* Progress bar */
+.progress-bar {
+  @apply w-full h-3 bg-gray-200 rounded-full overflow-hidden;
+}
+
+.progress-fill {
+  @apply h-full bg-gradient-to-r from-green-400 to-green-500 transition-all duration-500 ease-out;
+}
+
+/* Audio and listening specific styles */
+.audio-button {
+  @apply relative flex items-center justify-center w-16 h-16 rounded-full bg-blue-500 border-4 border-blue-600 text-white shadow-lg transition-all duration-300;
+}
+
+.audio-button:hover {
+  @apply bg-blue-600 border-blue-700 transform scale-105;
+}
+
+.audio-button.playing {
+  @apply bg-green-500 border-green-600 animate-pulse;
+}
+
+.phonetic-display {
+  @apply bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-2xl border-2 border-blue-200 text-center;
+}
+
+.phonetic-word {
+  @apply text-3xl font-bold text-blue-800 mb-2;
+}
+
+.phonetic-notation {
+  @apply text-xl text-blue-600 font-mono tracking-wider;
+}
+
+.phonetic-meaning {
+  @apply text-sm text-gray-600 mt-2;
+}
+
+/* Listening instruction styles */
+.listening-instruction {
+  @apply text-lg font-medium text-gray-700 text-center mb-4 px-4 py-2 bg-yellow-50 rounded-lg border border-yellow-200;
+}
+
+.listening-hint {
+  @apply text-sm text-blue-600 bg-blue-50 px-3 py-1 rounded-lg border border-blue-200;
+}
+
+/* Audio wave animation */
+@keyframes audio-wave {
+  0%, 100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(1.5);
+  }
+}
+
+.audio-wave {
+  @apply w-1 h-4 bg-current mx-0.5 rounded-full;
+  animation: audio-wave 1s infinite;
+}
+
+.audio-wave:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.audio-wave:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.audio-wave:nth-child(4) {
+  animation-delay: 0.3s;
+}
+
+/* Enhanced answer feedback */
+.answer-feedback {
+  @apply rounded-xl p-4 border-2 transition-all duration-300;
+}
+
+.answer-feedback.correct {
+  @apply bg-green-50 border-green-200 text-green-800;
+}
+
+.answer-feedback.incorrect {
+  @apply bg-red-50 border-red-200 text-red-800;
+}
+
+/* Sentence highlighting */
+.sentence-highlight {
+  @apply bg-yellow-200 px-1 py-0.5 rounded;
+  animation: highlight-fade 2s ease-out;
+}
+
+@keyframes highlight-fade {
+  0% {
+    background-color: #fef08a;
+  }
+  100% {
+    background-color: transparent;
+  }
+}
