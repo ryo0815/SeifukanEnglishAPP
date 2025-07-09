@@ -86,47 +86,9 @@ export function SoundButton({
       return
     }
 
-    // Check if we have a specific audio file for this text
-    const actualAudioSrc = audioSrc || getAudioFileForText(text)
-    
-    if (actualAudioSrc) {
-      playAudioFileFromSrc(actualAudioSrc)
-    } else if (text) {
+    // Always use Web Speech API for pronunciation practice
+    if (text) {
       speakText()
-    }
-  }
-
-  const getAudioFileForText = (text?: string): string | null => {
-    // Return audio file path for specific phrases
-    if (text === "Hello, how are you?") {
-      return "/audio/hello-how-are-you.mp3"
-    }
-    return null
-  }
-
-  const playAudioFileFromSrc = async (src: string) => {
-    try {
-      setIsPlaying(true)
-      const audio = new Audio(src)
-      
-      audio.onended = () => setIsPlaying(false)
-      audio.onerror = () => {
-        setIsPlaying(false)
-        // Fallback to text-to-speech if audio file fails
-        if (text) {
-          speakText()
-        }
-      }
-      
-      await audio.play()
-      playSound("click")
-    } catch (error) {
-      setIsPlaying(false)
-      console.error("Audio playback failed:", error)
-      // Fallback to text-to-speech
-      if (text) {
-        speakText()
-      }
     }
   }
 
@@ -144,7 +106,7 @@ export function SoundButton({
       size="icon" 
       onClick={handlePlay} 
       className={`${className} audio-button ${isPlaying ? 'playing' : ''} transition-all duration-300`}
-      disabled={!canSpeak && !audioSrc}
+      disabled={!canSpeak || !text}
     >
       {isPlaying ? (
         <div className="flex items-center space-x-0.5">

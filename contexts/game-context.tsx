@@ -26,6 +26,9 @@ type GameAction =
   | { type: "EARN_GEMS"; amount: number }
   | { type: "ADVANCE_STAGE" }
   | { type: "LOAD_STATE"; state: Partial<GameState> }
+  | { type: "GAIN_HEART"; amount: number }
+  | { type: "GAIN_GEMS"; amount: number }
+  | { type: "SYNC_FROM_DATABASE"; payload: Partial<GameState> }
 
 const initialState: GameState = {
   hearts: 5,
@@ -41,16 +44,51 @@ const initialState: GameState = {
 
 function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
-    case "LOSE_HEART":
-      return { ...state, hearts: Math.max(0, state.hearts - 1) }
-
     case "GAIN_XP":
       return {
         ...state,
         xp: state.xp + action.amount,
         totalXp: state.totalXp + action.amount,
       }
-
+    case "LOSE_HEART":
+      return {
+        ...state,
+        hearts: Math.max(0, state.hearts - 1),
+      }
+    case "GAIN_HEART":
+      return {
+        ...state,
+        hearts: Math.min(5, state.hearts + 1),
+      }
+    case "GAIN_GEMS":
+      return {
+        ...state,
+        gems: state.gems + action.amount,
+      }
+    case "SPEND_GEMS":
+      return {
+        ...state,
+        gems: Math.max(0, state.gems - action.amount),
+      }
+    case "UPDATE_STREAK":
+      const today = new Date().toDateString()
+      const lastPlayDate = state.lastPlayDate
+      const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toDateString()
+      
+      let newStreak = state.streak
+      if (lastPlayDate !== today) {
+        if (lastPlayDate === yesterday) {
+          newStreak = state.streak + 1
+        } else {
+          newStreak = 1
+        }
+      }
+      
+      return {
+        ...state,
+        streak: newStreak,
+        lastPlayDate: today,
+      }
     case "COMPLETE_LESSON":
       const newCompletedLessons = new Set(state.completedLessons)
       newCompletedLessons.add(action.lessonId)
@@ -81,26 +119,8 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         gems: state.gems + 5, // Bonus gems for completing lessons
       }
 
-    case "UPDATE_STREAK":
-      const today = new Date().toDateString()
-      const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toDateString()
-
-      if (state.lastPlayDate === yesterday) {
-        return { ...state, streak: state.streak + 1, lastPlayDate: today }
-      } else if (state.lastPlayDate === today) {
-        return state // Already played today
-      } else {
-        return { ...state, streak: 1, lastPlayDate: today }
-      }
-
     case "REFILL_HEARTS":
       return { ...state, hearts: 5 }
-
-    case "SPEND_GEMS":
-      return { ...state, gems: Math.max(0, state.gems - action.amount) }
-
-    case "EARN_GEMS":
-      return { ...state, gems: state.gems + action.amount }
 
     case "ADVANCE_STAGE":
       const subStagesPerStageAdvance = 5
@@ -125,6 +145,17 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         ...state,
         ...action.state,
         completedLessons: new Set(action.state.completedLessons || []),
+      }
+
+    case "SYNC_FROM_DATABASE":
+      return {
+        ...state,
+        hearts: action.payload.hearts ?? state.hearts,
+        xp: action.payload.xp ?? state.xp,
+        totalXp: action.payload.totalXp ?? state.totalXp,
+        streak: action.payload.streak ?? state.streak,
+        gems: action.payload.gems ?? state.gems,
+        lastPlayDate: new Date().toDateString(),
       }
 
     default:

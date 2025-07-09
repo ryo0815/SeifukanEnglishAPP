@@ -2,125 +2,228 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { TopBar } from "@/components/layout/top-bar"
-import { BottomNav } from "@/components/layout/bottom-nav"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
+import { TopBar } from "@/components/layout/top-bar"
+import { BottomNav } from "@/components/layout/bottom-nav"
 import { useGame } from "@/contexts/game-context"
 import { 
-  Mic, 
+  CheckCircle, 
+  Lock, 
+  Play, 
   Target, 
-  Star, 
-  ChevronRight,
-  CheckCircle,
-  Lock,
-  Flame,
-  Volume2,
-  Play,
-  Trophy,
-  MessageCircle,
-  Users,
-  Coffee
+  Mic,
+  RotateCcw,
+  Gift
 } from "lucide-react"
 
-// 発音・日常会話特化の学習コンテンツ
-const dailyConversationLessons = [
+// 新しい学習内容に基づく12のカテゴリー（順次解放システム付き）
+const learningCategories = [
   {
     id: 1,
-    title: "基本の挨拶",
-    category: "greetings",
+    title: "あいさつ",
     icon: "👋",
+    description: "基本的な挨拶表現",
     difficulty: 1,
     phrases: [
-      { text: "Hello, how are you?", meaning: "こんにちは、元気ですか？" },
-      { text: "Nice to meet you", meaning: "はじめまして" },
-      { text: "Good morning", meaning: "おはようございます" },
-      { text: "Have a nice day", meaning: "良い一日を" }
+      { en: "Hey! How's it going?", ja: "やあ、調子どう？" },
+      { en: "Good to see you!", ja: "会えて嬉しい！" },
+      { en: "Long time no see!", ja: "久しぶり！" },
+      { en: "What's up?", ja: "元気してた？" },
+      { en: "Have a nice day!", ja: "よい一日を！" }
     ],
-    unlocked: true,
-    completed: false
+    unlocked: true, // 最初のカテゴリーは常に解放
+    completed: false,
+    gradient: "from-blue-400 to-purple-400"
   },
   {
     id: 2,
-    title: "カフェでの注文",
-    category: "ordering",
-    icon: "☕",
-    difficulty: 2,
+    title: "自己紹介・趣味",
+    icon: "🎸",
+    description: "自分について話す表現",
+    difficulty: 1,
     phrases: [
-      { text: "Can I have a coffee, please?", meaning: "コーヒーをお願いします" },
-      { text: "I'll take this one", meaning: "これにします" },
-      { text: "How much is it?", meaning: "いくらですか？" },
-      { text: "Here you are", meaning: "はい、どうぞ" }
+      { en: "I'm into music these days.", ja: "最近音楽にハマってる。" },
+      { en: "I love taking photos.", ja: "写真を撮るのが好きなんだ。" },
+      { en: "I play the guitar for fun.", ja: "趣味でギター弾いてます。" },
+      { en: "I'm learning English now.", ja: "今英語を勉強してます。" },
+      { en: "I go jogging every morning.", ja: "毎朝ジョギングしてます。" }
     ],
     unlocked: false,
     completed: false,
-    comingSoon: true
+    gradient: "from-green-400 to-blue-400"
   },
   {
     id: 3,
-    title: "道案内・場所",
-    category: "directions",
-    icon: "🗺️",
-    difficulty: 2,
+    title: "感謝・謝罪",
+    icon: "🙏",
+    description: "感謝の気持ちや謝罪の表現",
+    difficulty: 1,
     phrases: [
-      { text: "Excuse me, where is the station?", meaning: "すみません、駅はどこですか？" },
-      { text: "Go straight and turn left", meaning: "まっすぐ行って左に曲がって" },
-      { text: "It's about 5 minutes walk", meaning: "歩いて約5分です" },
-      { text: "Thank you for your help", meaning: "助けてくれてありがとう" }
+      { en: "Thanks a lot!", ja: "ありがとう！" },
+      { en: "I really appreciate it.", ja: "本当に感謝してます。" },
+      { en: "Sorry about that.", ja: "申し訳ありません。" },
+      { en: "My bad.", ja: "私のせいです。" },
+      { en: "No worries.", ja: "心配しないで。" }
     ],
     unlocked: false,
     completed: false,
-    comingSoon: true
+    gradient: "from-pink-400 to-red-400"
   },
   {
     id: 4,
-    title: "自己紹介",
-    category: "introduction",
-    icon: "👤",
-    difficulty: 2,
+    title: "リアクション",
+    icon: "😊",
+    description: "相手の話に対する反応",
+    difficulty: 1,
     phrases: [
-      { text: "Let me introduce myself", meaning: "自己紹介させてください" },
-      { text: "I work as a...", meaning: "私は...として働いています" },
-      { text: "I'm interested in...", meaning: "私は...に興味があります" },
-      { text: "Nice talking with you", meaning: "お話しできて良かったです" }
+      { en: "That's amazing!", ja: "すごいね！" },
+      { en: "Sounds good!", ja: "いいね！" },
+      { en: "I like that idea.", ja: "そのアイデアいいね。" },
+      { en: "That makes sense.", ja: "なるほど。" },
+      { en: "You're right.", ja: "その通りだね。" }
     ],
     unlocked: false,
     completed: false,
-    comingSoon: true
+    gradient: "from-yellow-400 to-orange-400"
   },
   {
     id: 5,
-    title: "感情表現",
-    category: "emotions",
-    icon: "😊",
-    difficulty: 3,
+    title: "お願い・依頼",
+    icon: "🙌",
+    description: "何かを頼む時の表現",
+    difficulty: 2,
     phrases: [
-      { text: "I'm so excited!", meaning: "とてもワクワクしています！" },
-      { text: "That sounds great", meaning: "それは素晴らしいですね" },
-      { text: "I'm a bit worried", meaning: "少し心配です" },
-      { text: "Don't worry about it", meaning: "心配しないで" }
+      { en: "Can you help me?", ja: "手伝ってくれる？" },
+      { en: "Could you say that again?", ja: "もう一度言ってくれる？" },
+      { en: "Let's take a break.", ja: "休憩しましょう。" },
+      { en: "Please wait a moment.", ja: "少し待ってください。" },
+      { en: "Let's meet at 3.", ja: "3時に会いましょう。" }
     ],
     unlocked: false,
     completed: false,
-    comingSoon: true
+    gradient: "from-teal-400 to-cyan-400"
   },
   {
     id: 6,
-    title: "電話での会話",
-    category: "phone",
-    icon: "📞",
-    difficulty: 3,
+    title: "提案・同意",
+    icon: "💡",
+    description: "提案や同意を表す表現",
+    difficulty: 2,
     phrases: [
-      { text: "This is... speaking", meaning: "...です（電話で）" },
-      { text: "Could you hold on a moment?", meaning: "少々お待ちください" },
-      { text: "I'll get back to you", meaning: "後でご連絡します" },
-      { text: "Thank you for calling", meaning: "お電話ありがとうございます" }
+      { en: "How about lunch?", ja: "昼食はどう？" },
+      { en: "Let's do it!", ja: "やろう！" },
+      { en: "I totally agree.", ja: "完全に同意します。" },
+      { en: "That's a great idea!", ja: "それは素晴らしいアイデア！" },
+      { en: "Why not?", ja: "なんでダメなの？" }
     ],
     unlocked: false,
     completed: false,
-    comingSoon: true
+    gradient: "from-indigo-400 to-purple-400"
+  },
+  {
+    id: 7,
+    title: "感情・気持ち",
+    icon: "💖",
+    description: "感情や気持ちを表す表現",
+    difficulty: 2,
+    phrases: [
+      { en: "I'm so excited!", ja: "とても興奮してる！" },
+      { en: "I was nervous.", ja: "緊張していました。" },
+      { en: "I feel happy today.", ja: "今日は幸せな気分。" },
+      { en: "I'm a bit tired.", ja: "少し疲れてる。" },
+      { en: "That made me smile.", ja: "それで笑顔になった。" }
+    ],
+    unlocked: false,
+    completed: false,
+    gradient: "from-rose-400 to-pink-400"
+  },
+  {
+    id: 8,
+    title: "カフェ・買い物",
+    icon: "☕",
+    description: "カフェや買い物での表現",
+    difficulty: 2,
+    phrases: [
+      { en: "I'll have a coffee, please.", ja: "コーヒーをお願いします。" },
+      { en: "Is this seat taken?", ja: "この席は空いてますか？" },
+      { en: "How much is it?", ja: "いくらですか？" },
+      { en: "Can I try this on?", ja: "これを試着できますか？" },
+      { en: "Do you have this in a larger size?", ja: "これの大きいサイズはありますか？" }
+    ],
+    unlocked: false,
+    completed: false,
+    gradient: "from-amber-400 to-orange-400"
+  },
+  {
+    id: 9,
+    title: "学校・学び",
+    icon: "📚",
+    description: "学校や勉強に関する表現",
+    difficulty: 3,
+    phrases: [
+      { en: "I'm studying hard.", ja: "一生懸命勉強してる。" },
+      { en: "I finished my homework.", ja: "宿題を終わらせた。" },
+      { en: "I have a test tomorrow.", ja: "明日テストがある。" },
+      { en: "What does this word mean?", ja: "この単語の意味は？" },
+      { en: "Let's study together.", ja: "一緒に勉強しよう。" }
+    ],
+    unlocked: false,
+    completed: false,
+    gradient: "from-emerald-400 to-teal-400"
+  },
+  {
+    id: 10,
+    title: "電話・連絡",
+    icon: "📞",
+    description: "電話や連絡に関する表現",
+    difficulty: 3,
+    phrases: [
+      { en: "Can I call you later?", ja: "あとで電話してもいい？" },
+      { en: "I'll text you.", ja: "メッセージ送るね。" },
+      { en: "Sorry, I missed your call.", ja: "ごめん、電話に出れなかった。" },
+      { en: "Let me check my schedule.", ja: "スケジュールを確認するね。" },
+      { en: "I'll get back to you.", ja: "また連絡するね。" }
+    ],
+    unlocked: false,
+    completed: false,
+    gradient: "from-sky-400 to-blue-400"
+  },
+  {
+    id: 11,
+    title: "別れ・終了",
+    icon: "👋",
+    description: "別れの挨拶や終了の表現",
+    difficulty: 3,
+    phrases: [
+      { en: "See you soon!", ja: "また近いうちに！" },
+      { en: "Take care!", ja: "気をつけて！" },
+      { en: "Have a good night!", ja: "おやすみなさい！" },
+      { en: "It was nice talking to you.", ja: "話せて良かった。" },
+      { en: "Let's talk again.", ja: "また話しましょう。" }
+    ],
+    unlocked: false,
+    completed: false,
+    gradient: "from-purple-400 to-indigo-400"
+  },
+  {
+    id: 12,
+    title: "応援・共感",
+    icon: "💪",
+    description: "応援や共感を表す表現",
+    difficulty: 3,
+    phrases: [
+      { en: "You can do it!", ja: "君ならできる！" },
+      { en: "I'm rooting for you.", ja: "応援してるよ！" },
+      { en: "That sounds tough.", ja: "大変だったね。" },
+      { en: "Hang in there!", ja: "頑張って！" },
+      { en: "I'm proud of you!", ja: "誇りに思うよ！" }
+    ],
+    unlocked: false,
+    completed: false,
+    gradient: "from-violet-400 to-purple-400"
   }
 ]
 
@@ -128,282 +231,223 @@ export default function LearnPage() {
   const router = useRouter()
   const { state, dispatch } = useGame()
   const [dailyGoalProgress, setDailyGoalProgress] = useState(0)
-  const [lessons, setLessons] = useState(dailyConversationLessons)
+  const [lessons, setLessons] = useState(learningCategories)
+  
+  // 進捗データを管理（実際のアプリでは API から取得）
+  const [completedLessons, setCompletedLessons] = useState<number[]>([])
+  const [isLoadingProgress, setIsLoadingProgress] = useState(false)
 
-  // モックデータ - 実際のアプリでは API から取得
-  const [userStats, setUserStats] = useState({
-    speakingCount: 45,
-    practiceCount: 128,
-    pronunciationScore: 78.5,
-    completedLessons: 2
-  })
-
+  // ローカルストレージから学習記録を読み込み
   useEffect(() => {
-    // Update streak on daily visit
-    dispatch({ type: "UPDATE_STREAK" })
-
-    // Calculate daily goal progress based on speaking practice
-    const dailyGoal = 5 // 1日5フレーズの発音練習
-    const todaysPractice = userStats.speakingCount % 10 // モック: 今日の練習回数
-    setDailyGoalProgress(Math.min((todaysPractice / dailyGoal) * 100, 100))
-  }, [dispatch, userStats.speakingCount])
-
-  const handleLessonClick = (lessonId: number) => {
-    const lesson = lessons.find(l => l.id === lessonId)
-    if (!lesson?.unlocked) return
-
-    if (state.hearts <= 0) {
-      router.push("/shop")
-      return
+    const savedProgress = localStorage.getItem('pronunciation-completed-lessons')
+    if (savedProgress) {
+      const completed = JSON.parse(savedProgress)
+      setCompletedLessons(completed)
     }
+  }, [])
 
-    // 発音練習ページに移動
-    router.push(`/pronunciation-practice/${lessonId}`)
+  // 学習記録の更新
+  const updateLearningProgress = (lessonId: number) => {
+    const newCompleted = [...completedLessons, lessonId]
+    setCompletedLessons(newCompleted)
+    localStorage.setItem('pronunciation-completed-lessons', JSON.stringify(newCompleted))
   }
 
-  const getDifficultyColor = (difficulty: number) => {
-    switch (difficulty) {
-      case 1: return "bg-green-100 text-green-800"
-      case 2: return "bg-yellow-100 text-yellow-800"
-      case 3: return "bg-orange-100 text-orange-800"
-      default: return "bg-gray-100 text-gray-800"
+  // 進捗の計算
+  const calculateProgress = () => {
+    const totalLessons = lessons.length
+    const completedCount = completedLessons.length
+    return Math.round((completedCount / totalLessons) * 100)
+  }
+
+  // デイリーゴールの計算
+  const calculateDailyGoal = () => {
+    const today = new Date().toDateString()
+    const todayLessons = JSON.parse(localStorage.getItem(`daily-progress-${today}`) || '0')
+    return Math.min(todayLessons * 20, 100) // 1レッスン = 20%
+  }
+
+  // レッスンの解放状態を更新
+  const updateLessonAvailability = () => {
+    const updatedLessons = lessons.map((lesson, index) => {
+      const isCompleted = completedLessons.includes(lesson.id)
+      const isUnlocked = index === 0 || completedLessons.includes(lessons[index - 1].id)
+      
+      return {
+        ...lesson,
+        completed: isCompleted,
+        unlocked: isUnlocked
+      }
+    })
+    
+    setLessons(updatedLessons)
+  }
+
+  // 進捗が更新されたら解放状態を更新
+  useEffect(() => {
+    updateLessonAvailability()
+    setDailyGoalProgress(calculateDailyGoal())
+  }, [completedLessons])
+
+  const handleLessonClick = (lesson: any) => {
+    if (!lesson.unlocked) {
+      return // ロックされたレッスンはクリックできない
+    }
+
+    // 発音練習ページに遷移
+    router.push(`/pronunciation-practice/${lesson.id}`)
+  }
+
+  const handleResetProgress = () => {
+    if (confirm('学習記録をリセットしますか？この操作は取り消せません。')) {
+      setCompletedLessons([])
+      localStorage.removeItem('pronunciation-completed-lessons')
+      
+      // 今日の進捗もリセット
+      const today = new Date().toDateString()
+      localStorage.removeItem(`daily-progress-${today}`)
+      setDailyGoalProgress(0)
     }
   }
 
-  const getCategoryIcon = (category: string) => {
-    switch (category) {
-      case "greetings": return MessageCircle
-      case "ordering": return Coffee
-      case "directions": return Target
-      case "introduction": return Users
-      case "emotions": return Star
-      case "phone": return Volume2
-      default: return Mic
-    }
-  }
+  const progress = calculateProgress()
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
       <TopBar />
-
-      <div className="p-4 pb-20">
-        {/* ヘッダー */}
-        <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">
-            発音・日常会話マスター
-          </h1>
-          <p className="text-gray-600">
-            実践的な英語フレーズで自信をつけよう
-          </p>
-        </div>
-
-        {/* Daily Progress Card */}
-        <Card className="p-6 mb-6 bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="text-xl font-bold">今日の発音練習</h2>
-              <p className="text-indigo-100">目標: 5フレーズの発音練習</p>
-            </div>
-            <Mic className="w-8 h-8 text-indigo-200" />
-          </div>
-
-          <div className="mb-4">
-            <div className="flex justify-between text-sm mb-1">
-              <span>{Math.round(dailyGoalProgress)}% 完了</span>
-              <span>{state.streak} 日間ストリーク 🔥</span>
-            </div>
-            <div className="w-full bg-indigo-300/30 rounded-full h-3">
-              <div
-                className="bg-white rounded-full h-3 transition-all duration-500"
-                style={{ width: `${dailyGoalProgress}%` }}
-              />
-            </div>
-          </div>
-        </Card>
-
-        {/* 発音統計カード */}
-        <Card className="p-6 mb-6 bg-gradient-to-r from-green-500 to-green-600 text-white">
-          <div className="text-center mb-4">
-            <h2 className="text-lg font-bold mb-2">あなたの発音レベル</h2>
-            <div className="text-3xl font-bold">{userStats.pronunciationScore.toFixed(1)}</div>
-            <div className="text-sm opacity-90">平均発音スコア</div>
-          </div>
+      
+      <div className="pt-16 pb-20 px-4">
+        <div className="max-w-4xl mx-auto">
           
-          <div className="grid grid-cols-3 gap-4">
-            <div className="text-center">
-              <div className="text-lg font-bold">{userStats.speakingCount}</div>
-              <div className="text-xs opacity-90">発音練習回数</div>
-            </div>
-            <div className="text-center">
-              <div className="text-lg font-bold">{userStats.practiceCount}</div>
-              <div className="text-xs opacity-90">総練習回数</div>
-            </div>
-            <div className="text-center">
-              <div className="text-lg font-bold">{userStats.completedLessons}</div>
-              <div className="text-xs opacity-90">完了レッスン</div>
-            </div>
-          </div>
-        </Card>
-
-        {/* Quick Stats */}
-        <div className="grid grid-cols-3 gap-4 mb-6">
-          <Card className="p-4 text-center">
-            <Mic className="w-6 h-6 text-blue-500 mx-auto mb-2" />
-            <div className="text-2xl font-bold text-blue-600">{userStats.speakingCount}</div>
-            <div className="text-xs text-gray-500">発音練習</div>
-          </Card>
-
-          <Card className="p-4 text-center">
-            <Trophy className="w-6 h-6 text-yellow-500 mx-auto mb-2" />
-            <div className="text-2xl font-bold text-yellow-600">{state.totalXp}</div>
-            <div className="text-xs text-gray-500">総XP</div>
-          </Card>
-
-          <Card className="p-4 text-center">
-            <Star className="w-6 h-6 text-purple-500 mx-auto mb-2" />
-            <div className="text-2xl font-bold text-purple-600">{Math.floor(userStats.pronunciationScore / 20)}</div>
-            <div className="text-xs text-gray-500">発音レベル</div>
-          </Card>
-        </div>
-
-        {/* 日常会話レッスン */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-gray-800">日常会話レッスン</h2>
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => router.push('/curriculum')}
-            >
-              全コース
-            </Button>
+          {/* 進捗サマリー */}
+          <div className="mb-8">
+            <Card className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">学習進捗</h2>
+                  <p className="text-gray-600">{completedLessons.length}/{lessons.length} カテゴリー完了</p>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <Badge variant="secondary" className="text-sm">
+                    {progress}% 完了
+                  </Badge>
+                  <Button 
+                    onClick={handleResetProgress}
+                    variant="outline"
+                    size="sm"
+                    className="text-red-600 hover:text-red-700"
+                  >
+                    <RotateCcw className="w-4 h-4 mr-2" />
+                    リセット
+                  </Button>
+                </div>
               </div>
+              
+              <div className="space-y-4">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-gray-700">全体進捗</span>
+                    <span className="text-sm text-gray-500">{progress}%</span>
+                  </div>
+                  <Progress value={progress} className="h-2" />
+                </div>
+                
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-gray-700">今日の目標</span>
+                    <span className="text-sm text-gray-500">{dailyGoalProgress}%</span>
+                  </div>
+                  <Progress value={dailyGoalProgress} className="h-2 bg-green-100">
+                    <div 
+                      className="h-full bg-gradient-to-r from-green-400 to-emerald-500 rounded-full transition-all duration-300"
+                      style={{ width: `${dailyGoalProgress}%` }}
+                    />
+                  </Progress>
+                </div>
+              </div>
+            </Card>
+          </div>
 
-          {lessons.map((lesson, index) => {
-            const CategoryIcon = getCategoryIcon(lesson.category)
-            const isUnlocked = lesson.unlocked || index <= userStats.completedLessons
-            const isComingSoon = lesson.comingSoon
-
-                  return (
+          {/* 学習カテゴリー */}
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {lessons.map((lesson) => (
               <Card 
                 key={lesson.id}
-                className={`p-4 transition-all duration-300 ${
-                  isComingSoon
-                    ? 'opacity-60 cursor-not-allowed bg-gray-50'
-                    : isUnlocked 
-                    ? 'cursor-pointer hover:shadow-lg border-2 border-transparent hover:border-blue-300' 
-                    : 'opacity-60 cursor-not-allowed'
-                }`}
-                onClick={() => !isComingSoon && isUnlocked && handleLessonClick(lesson.id)}
+                className={`p-6 cursor-pointer transform transition-all duration-300 hover:scale-105 ${
+                  lesson.unlocked ? 'hover:shadow-lg' : 'opacity-50 cursor-not-allowed'
+                } ${lesson.completed ? 'ring-2 ring-green-400' : ''}`}
+                onClick={() => handleLessonClick(lesson)}
               >
-                <div className="flex items-center space-x-4">
-                  <div className="flex-shrink-0">
-                    <div className={`w-16 h-16 rounded-full flex items-center justify-center ${
-                      lesson.completed 
-                        ? 'bg-green-100' 
-                        : isComingSoon
-                        ? 'bg-gray-100'
-                        : isUnlocked 
-                        ? 'bg-blue-100' 
-                        : 'bg-gray-100'
-                    }`}>
-                      {lesson.completed ? (
-                        <CheckCircle className="w-8 h-8 text-green-600" />
-                      ) : isComingSoon ? (
-                        <div className="text-2xl opacity-50">{lesson.icon}</div>
-                      ) : isUnlocked ? (
-                        <div className="text-2xl">{lesson.icon}</div>
-                      ) : (
-                        <Lock className="w-8 h-8 text-gray-400" />
-                      )}
-                        </div>
-                  </div>
-
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <h3 className={`font-bold ${isComingSoon ? 'text-gray-500' : 'text-gray-800'}`}>
-                        {lesson.title}
-                      </h3>
-                      {isComingSoon ? (
-                        <Badge className="bg-gray-200 text-gray-600">
-                          Coming Soon
-                        </Badge>
-                      ) : (
-                        <Badge className={getDifficultyColor(lesson.difficulty)}>
-                          レベル {lesson.difficulty}
-                        </Badge>
-                      )}
-                      {lesson.completed && (
-                        <CheckCircle className="w-5 h-5 text-green-500" />
-                      )}
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center space-x-3">
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl bg-gradient-to-r ${lesson.gradient}`}>
+                      {lesson.icon}
                     </div>
-                    
-                    <div className="grid grid-cols-2 gap-2 mb-3">
-                      {lesson.phrases.slice(0, 2).map((phrase, phraseIndex) => (
-                        <div key={phraseIndex} className={`text-xs p-2 rounded ${
-                          isComingSoon ? 'bg-gray-100 text-gray-400' : 'bg-gray-50'
-                        }`}>
-                          <div className={`font-medium ${isComingSoon ? 'text-gray-400' : 'text-gray-700'}`}>
-                            {phrase.text}
-                          </div>
-                          <div className={`${isComingSoon ? 'text-gray-300' : 'text-gray-500'}`}>
-                            {phrase.meaning}
-                          </div>
-                        </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-800">{lesson.title}</h3>
+                      <p className="text-sm text-gray-600">{lesson.description}</p>
+                    </div>
+                  </div>
+                  
+                  {lesson.completed ? (
+                    <CheckCircle className="w-6 h-6 text-green-500" />
+                  ) : lesson.unlocked ? (
+                    <Play className="w-6 h-6 text-blue-500" />
+                  ) : (
+                    <Lock className="w-6 h-6 text-gray-400" />
+                  )}
+                </div>
+                
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">難易度</span>
+                    <div className="flex space-x-1">
+                      {[...Array(3)].map((_, i) => (
+                        <div
+                          key={i}
+                          className={`w-2 h-2 rounded-full ${
+                            i < lesson.difficulty ? 'bg-blue-500' : 'bg-gray-300'
+                          }`}
+                        />
                       ))}
                     </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <div className={`flex items-center space-x-4 text-xs ${
-                        isComingSoon ? 'text-gray-400' : 'text-gray-500'
-                      }`}>
-                        <div className="flex items-center space-x-1">
-                          <Volume2 className="w-3 h-3" />
-                          <span>{lesson.phrases.length} フレーズ</span>
-                        </div>
-                        <div className="flex items-center space-x-1">
-                          <Star className="w-3 h-3" />
-                          <span>{lesson.difficulty * 10} XP</span>
-                        </div>
-                      </div>
-                      
-                      {isComingSoon ? (
-                        <Badge variant="outline" className="text-xs text-gray-400 border-gray-300">
-                          準備中
-                        </Badge>
-                      ) : isUnlocked && !lesson.completed ? (
-                        <Button size="sm" className="text-xs">
-                          <Play className="w-3 h-3 mr-1" />
-                          練習開始
-                        </Button>
-                      ) : null}
-                    </div>
-              </div>
-
-                  {!isComingSoon && isUnlocked && <ChevronRight className="w-5 h-5 text-gray-400" />}
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">フレーズ数</span>
+                    <span className="text-sm text-gray-500">{lesson.phrases.length}個</span>
+                  </div>
                 </div>
+                
+                {lesson.unlocked && (
+                  <div className="mt-4 flex items-center space-x-2">
+                    <Mic className="w-4 h-4 text-blue-500" />
+                    <span className="text-sm text-blue-600">発音練習開始</span>
+                  </div>
+                )}
               </Card>
-            )
-          })}
-        </div>
-
-        {/* 学習継続ボタン */}
-          <div className="fixed bottom-20 left-1/2 transform -translate-x-1/2 w-full max-w-[390px] px-4">
-            <Button
-            onClick={() => {
-              const nextLesson = lessons.find(l => l.unlocked && !l.completed)
-              if (nextLesson) {
-                handleLessonClick(nextLesson.id)
-              }
-            }}
-            className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-4 rounded-xl shadow-lg"
-          >
-            <Flame className="w-5 h-5 mr-2" />
-            発音練習を続ける
-            </Button>
+            ))}
           </div>
-      </div>
 
+          {/* 特典情報 */}
+          <div className="mt-8">
+            <Card className="p-6 bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-200">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full flex items-center justify-center">
+                  <Gift className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-800">特典解放</h3>
+                  <p className="text-sm text-gray-600">
+                    3つのカテゴリーを完了すると特別な発音チャレンジが解放されます！
+                  </p>
+                </div>
+              </div>
+            </Card>
+          </div>
+        </div>
+      </div>
+      
       <BottomNav />
     </div>
   )

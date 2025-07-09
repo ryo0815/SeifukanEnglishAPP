@@ -1,14 +1,19 @@
 "use client"
 
-import type React from "react"
-
+import { ReactNode } from "react"
 import { GameProvider } from "@/contexts/game-context"
 import { SoundProvider } from "@/contexts/sound-context"
 
-export function Providers({ children }: { children: React.ReactNode }) {
+interface ProvidersProps {
+  children: ReactNode
+}
+
+export function Providers({ children }: ProvidersProps) {
   return (
-    <SoundProvider>
-      <GameProvider>{children}</GameProvider>
-    </SoundProvider>
+    <GameProvider>
+      <SoundProvider>
+        {children}
+      </SoundProvider>
+    </GameProvider>
   )
 }
