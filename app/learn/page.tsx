@@ -452,7 +452,7 @@ export default function LearnPage() {
                 </div>
                 </div>
               </Card>
-          </div>
+        </div>
           </div>
       </div>
 

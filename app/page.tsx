@@ -109,7 +109,7 @@ export default function Home() {
             <p className="text-gray-600 text-sm">
               12のカテゴリーで体系的にスキルアップ
             </p>
-          </Card>
+      </Card>
         </div>
       </div>
 

@@ -30,15 +30,15 @@ export function TopBar() {
           >
             <Home className="w-4 h-4" />
           </Button>
-          <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-2">
             <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
               <span className="text-white font-bold text-sm">🦉</span>
-            </div>
+        </div>
             <span className="font-semibold text-gray-800">OwlLearn</span>
           </div>
-        </div>
-        
-        <div className="flex items-center space-x-4">
+      </div>
+
+      <div className="flex items-center space-x-4">
           <HeartCounter />
           <XPBar />
           
@@ -51,8 +51,8 @@ export function TopBar() {
             {showMenu ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
           </Button>
         </div>
-      </div>
-      
+        </div>
+
       {showMenu && (
         <div className="absolute right-4 top-16 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
           <div className="p-2">
@@ -78,7 +78,7 @@ export function TopBar() {
               <Home className="w-4 h-4 mr-2" />
               ホーム
             </Button>
-          </div>
+        </div>
         </div>
       )}
     </div>

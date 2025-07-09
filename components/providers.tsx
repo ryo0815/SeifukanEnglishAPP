@@ -11,9 +11,9 @@ interface ProvidersProps {
 export function Providers({ children }: ProvidersProps) {
   return (
     <GameProvider>
-      <SoundProvider>
+    <SoundProvider>
         {children}
-      </SoundProvider>
+    </SoundProvider>
     </GameProvider>
   )
 }
