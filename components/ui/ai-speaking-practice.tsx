@@ -392,23 +392,23 @@ export function AISpeakingPractice({
     }
   }
 
-      return (
+  return (
     <div className="space-y-6">
       {/* Recording Controls */}
       <div className="text-center space-y-4">
         {/* Example Audio Button */}
-        <div className="flex justify-center">
-          <Button
+      <div className="flex justify-center">
+        <Button
             onClick={playExampleAudio}
             disabled={isPlayingExample}
-            variant="outline"
+          variant="outline"
             size="sm"
             className="mb-4"
-          >
+        >
             <Volume2 className="w-4 h-4 mr-2" />
             {isPlayingExample ? 'お手本を再生中...' : 'お手本を聞く'}
-          </Button>
-        </div>
+        </Button>
+      </div>
 
         {!hasRecorded ? (
       <div className="space-y-4">
@@ -543,12 +543,12 @@ export function AISpeakingPractice({
                     <li key={index} className="flex items-start space-x-2">
                       <span>•</span>
                       <span>{improvement}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          
             {/* 不正解時のボタン */}
             {showRetryButton && (
               <div className="flex justify-center space-x-4 mt-4">
@@ -568,7 +568,7 @@ export function AISpeakingPractice({
                 </Button>
               </div>
             )}
-          </div>
+        </div>
         </Card>
       )}
     </div>

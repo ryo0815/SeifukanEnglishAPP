@@ -10,9 +10,9 @@ import { TopBar } from "@/components/layout/top-bar"
 import { BottomNav } from "@/components/layout/bottom-nav"
 import { useGame } from "@/contexts/game-context"
 import { 
-  CheckCircle, 
-  Lock, 
-  Play, 
+  CheckCircle,
+  Lock,
+  Play,
   Target, 
   Mic,
   RotateCcw,
@@ -323,7 +323,7 @@ export default function LearnPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
       <TopBar />
-      
+
       <div className="pt-16 pb-20 px-4">
         <div className="max-w-4xl mx-auto">
           
@@ -349,33 +349,33 @@ export default function LearnPage() {
                     リセット
                   </Button>
                 </div>
-              </div>
-              
+        </div>
+
               <div className="space-y-4">
-                <div>
+            <div>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-medium text-gray-700">全体進捗</span>
                     <span className="text-sm text-gray-500">{progress}%</span>
-                  </div>
+            </div>
                   <Progress value={progress} className="h-2" />
-                </div>
-                
+          </div>
+
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-medium text-gray-700">今日の目標</span>
                     <span className="text-sm text-gray-500">{dailyGoalProgress}%</span>
-                  </div>
+            </div>
                   <Progress value={dailyGoalProgress} className="h-2 bg-green-100">
-                    <div 
+              <div
                       className="h-full bg-gradient-to-r from-green-400 to-emerald-500 rounded-full transition-all duration-300"
-                      style={{ width: `${dailyGoalProgress}%` }}
-                    />
+                style={{ width: `${dailyGoalProgress}%` }}
+              />
                   </Progress>
-                </div>
-              </div>
-            </Card>
+            </div>
           </div>
-
+        </Card>
+          </div>
+          
           {/* 学習カテゴリー */}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {lessons.map((lesson) => (
@@ -394,18 +394,18 @@ export default function LearnPage() {
                     <div>
                       <h3 className="font-semibold text-gray-800">{lesson.title}</h3>
                       <p className="text-sm text-gray-600">{lesson.description}</p>
-                    </div>
+                        </div>
                   </div>
-                  
+
                   {lesson.completed ? (
                     <CheckCircle className="w-6 h-6 text-green-500" />
                   ) : lesson.unlocked ? (
                     <Play className="w-6 h-6 text-blue-500" />
                   ) : (
                     <Lock className="w-6 h-6 text-gray-400" />
-                  )}
-                </div>
-                
+                      )}
+                    </div>
+                    
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-600">難易度</span>
@@ -419,23 +419,23 @@ export default function LearnPage() {
                         />
                       ))}
                     </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-600">フレーズ数</span>
                     <span className="text-sm text-gray-500">{lesson.phrases.length}個</span>
-                  </div>
-                </div>
-                
+                        </div>
+                      </div>
+                      
                 {lesson.unlocked && (
                   <div className="mt-4 flex items-center space-x-2">
                     <Mic className="w-4 h-4 text-blue-500" />
                     <span className="text-sm text-blue-600">発音練習開始</span>
-                  </div>
+                    </div>
                 )}
               </Card>
             ))}
-          </div>
+              </div>
 
           {/* 特典情報 */}
           <div className="mt-8">
@@ -450,12 +450,12 @@ export default function LearnPage() {
                     3つのカテゴリーを完了すると特別な発音チャレンジが解放されます！
                   </p>
                 </div>
-              </div>
-            </Card>
+                </div>
+              </Card>
           </div>
-        </div>
+          </div>
       </div>
-      
+
       <BottomNav />
     </div>
   )
