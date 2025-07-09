@@ -294,8 +294,16 @@ export default function LearnPage() {
       return // ロックされたレッスンはクリックできない
     }
 
-    // 発音練習ページに遷移
-    router.push(`/pronunciation-practice/${lesson.id}`)
+    // 簡単な発音練習をモーダルで実装
+    alert(`${lesson.title}の発音練習を開始します！\n\n練習フレーズ:\n${lesson.phrases.map((p: any) => `• ${p.en} (${p.ja})`).join('\n')}`)
+    
+    // レッスン完了として記録
+    updateLearningProgress(lesson.id)
+    
+    // 今日の進捗を更新
+    const today = new Date().toDateString()
+    const currentProgress = JSON.parse(localStorage.getItem(`daily-progress-${today}`) || '0')
+    localStorage.setItem(`daily-progress-${today}`, JSON.stringify(currentProgress + 1))
   }
 
   const handleResetProgress = () => {

@@ -3,7 +3,6 @@ import type { Metadata, Viewport } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import { Providers } from "@/components/providers"
-import { Toaster } from "@/components/ui/toaster"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -11,7 +10,7 @@ export const metadata: Metadata = {
   title: "OwlLearn - 楽しく英語学習",
   description:
     "ゲーム感覚で楽しく英語をマスター！スキルツリーを進めて、XPを獲得し、学習ストリークを維持しよう！",
-  manifest: "/manifest.json",
+  manifest: "/English-app/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -36,9 +35,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link rel="icon" type="image/png" sizes="32x32" href="/icon-32x32.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/icon-16x16.png" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/English-app/icon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/English-app/icon-16x16.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/English-app/apple-touch-icon.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="format-detection" content="telephone=no" />
@@ -46,7 +45,6 @@ export default function RootLayout({
       <body className={`${inter.className} bg-gray-50 overflow-x-hidden`} suppressHydrationWarning>
         <Providers>
           <div className="min-h-screen max-w-[430px] mx-auto bg-white shadow-xl">{children}</div>
-          <Toaster />
         </Providers>
       </body>
     </html>
