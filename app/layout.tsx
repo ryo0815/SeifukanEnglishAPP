@@ -42,9 +42,9 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="format-detection" content="telephone=no" />
       </head>
-      <body className={`${inter.className} bg-gray-50 overflow-x-hidden`} suppressHydrationWarning>
+      <body className={`${inter.className} overflow-x-hidden`} suppressHydrationWarning>
         <Providers>
-          <div className="min-h-screen max-w-[430px] mx-auto bg-white shadow-xl">{children}</div>
+          <div className="min-h-screen mx-auto">{children}</div>
         </Providers>
       </body>
     </html>
