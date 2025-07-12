@@ -20,17 +20,17 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-teen-blue/20 via-teen-purple/20 to-teen-pink/20">
       {/* Header */}
       <header className="p-6 flex justify-between items-center">
-        <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-            <span className="text-white font-bold">🦉</span>
+        <div className="flex items-center space-x-3">
+          <div className="w-10 h-10 bg-gradient-teen rounded-full flex items-center justify-center shadow-lg animate-float">
+            <span className="text-white font-bold text-lg">🦉</span>
           </div>
-          <h1 className="text-xl font-bold text-gray-800">OwlLearn</h1>
+          <h1 className="text-2xl font-bold bg-gradient-teen bg-clip-text text-transparent">OwlLearn</h1>
         </div>
         
-        <Button onClick={handleGetStarted} variant="outline" size="sm">
+        <Button onClick={handleGetStarted} className="bg-gradient-teen hover:opacity-90 text-white border-0 shadow-lg" size="sm">
           <Play className="w-4 h-4 mr-2" />
           学習開始
         </Button>
