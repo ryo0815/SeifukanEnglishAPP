@@ -20,17 +20,17 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teen-blue/20 via-teen-purple/20 to-teen-pink/20">
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100">
       {/* Header */}
       <header className="p-6 flex justify-between items-center">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-gradient-teen rounded-full flex items-center justify-center shadow-lg animate-float">
+          <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center shadow-lg">
             <span className="text-white font-bold text-lg">🦉</span>
           </div>
-          <h1 className="text-2xl font-bold bg-gradient-teen bg-clip-text text-transparent">OwlLearn</h1>
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">OwlLearn</h1>
         </div>
         
-        <Button onClick={handleGetStarted} className="bg-gradient-teen hover:opacity-90 text-white border-0 shadow-lg" size="sm">
+        <Button onClick={handleGetStarted} className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white border-0 shadow-lg" size="sm">
           <Play className="w-4 h-4 mr-2" />
           学習開始
         </Button>
@@ -41,7 +41,7 @@ export default function Home() {
         <div className="max-w-4xl mx-auto">
           <h2 className="text-5xl font-bold text-gray-800 mb-6">
             発音練習で
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent block">
               英語力向上
             </span>
           </h2>
